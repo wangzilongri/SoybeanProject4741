@@ -1,7 +1,7 @@
 # SoybeanProject4741
 SoybeanProject4741
 
-Repository for the [Soybean Competition](http://connect.informs.org/oratc/2017problem)
+Repository for the [INFORMS Soybean Competition](http://connect.informs.org/oratc/2017problem)
 
 Contributors: 
 Clara Lishan Ong
