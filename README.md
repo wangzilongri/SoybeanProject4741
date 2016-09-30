@@ -1,5 +1,4 @@
-# SoybeanProject4741
-Syngenta Crop Challenge
+# Syngenta Crop Challenge
 
 Repository for the [INFORMS Soybean Competition](http://connect.informs.org/oratc/2017problem)
 
