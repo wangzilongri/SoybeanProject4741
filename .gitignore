@@ -1,0 +1,14 @@
+*.csv
+*.txt
+*.zip
+*.tar
+*.aux 
+*.log 
+*.out 
+*.bbl 
+*.blg 
+*.brf 
+*.idx 
+*.toc
+*.xlsx
+*.xlsx*
