@@ -1,0 +1,105 @@
+\documentclass[psamsfonts]{amsart}
+
+%-------Packages---------
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{graphicx}
+\usepackage{pdfpages}
+\usepackage{enumerate}
+\usepackage[all,arc]{xy}
+\usepackage{mathrsfs}
+\usepackage{bbm}
+\usepackage[margin=1.0in]{geometry}
+
+\usepackage{svg}
+\usepackage{fancyhdr}
+\usepackage{verbatimbox}
+\usepackage{xcolor}
+\usepackage{adjustbox}
+\definecolor{shadecolor}{rgb}{0.94, 0.94, 0.94}
+\setlength\parindent{0pt}
+
+\newenvironment{code}%
+   {\par\adjustbox{margin=1ex,bgcolor=shadecolor,margin=0ex \medskipamount}\bgroup\varwidth\linewidth\verbatim}%
+   {\endverbatim\endvarwidth\egroup}
+
+\newenvironment{code2}%
+   {\par\adjustbox{margin=1ex,bgcolor=shadecolor,margin=0ex \medskipamount}\bgroup\minipage\linewidth\verbatim}%
+   {\endverbatim\endminipage\egroup}
+
+\setlength{\voffset}{-0.50in}
+%\setlength{\headsep}{10pt}
+
+\title{ORIE 4741: Project Midterm Report}
+\author{David Lee (dyl44), Clara Ong Lishan (lo88), Zilong Wang (zw243)}
+\date{October 27, 2016}
+
+\begin{document}
+\maketitle
+
+\underline{NOTE TO READER}: Our project topic is based on the INFORMS Competition. Much of the information was only just released by the organizers. As such, most of our time was spent on trying to understand the data. There are some parts of the data which we still do not understand, and we are waiting for the organizer's clarification. 
+
+\subsection*{Abstract}
+\hfill \\
+
+In order for a crop variety to become commercialised, it often has to undergo several rounds of strict testing and experimentation to ensure that it offers good yield. Throughout these multiple phases of testing, crop varieties are often benchmarked against their ``peers" and successfully commercialised varieties that came before by their yield. Every year, varieties that fail to make the cut are discontinued, while those that survive compete again in the next year with newly introduced varieties.\\
+\\
+ The primary goal of the INFORMS competition is that given past data, we should develop a prediction model that can be used to predict the volume of potential sales for each soybean variety in 2014, and based on those predictions, determine if we should commercialise them or not. This article reports our preliminary data analyses conducted, interpretation of results, and our future plan of attack. \\
+
+
+\subsection*{Motivation}
+\hfill \\
+
+ Despite numerous tests that suggest that a commercialised variety should have performed well, the reality is that some underperforming varieties actually slipped past the checks (Type I Errors). It thus behooves us to find a new learning model that can predict sales with a greater degree of accuracy and thus minimise our number of misclassified (mistakenly commercialised) varieties.\\
+
+\subsection*{Understanding the Variables}
+\hfill \\
+
+ Before using any sophisticated procedures, we first performed exploratory data analysis to get acquainted with the dataset. Our data consists of $258253$ observations and $11$ predictors, and we provide a description of each predictor variable below.\\
+
+\begin{enumerate}
+    \item \textbf{Year} (Integer): When the experiment was conducted.
+    \item \textbf{Experiment} (Categorical): Consists of experimental varieties of relative similar maturity that are tested together.
+    \item \textbf{Location} (Categorical): Where the experiment was conducted. 
+    \item \textbf{Variety} (Categorical): Groups of soybeans that are genetically identical. 
+    \item \textbf{Family} (Categorical): Sharing the same family means the varieties have the same parents.
+    \item \textbf{Check} (Boolean): Whether the commercial soybean varieties are used as performance benchmarks in yield trials. 
+    \item \textbf{RM} (Float): Soybean relative maturity. Every 0.1 stands for 1 day.
+    \item \textbf{REPNO} (Categorical): Replication number. A variety under a specific experiment and location is tested more than once.
+    \item \textbf{Yield} (Float): This refers to the amount of grain per unit of land that a soybean variety produces. 
+    \item \textbf{Class of} (Integer): The batch the soybean variety belongs to. Takes on the value $-1$ if it is not part of a class.
+    \item \textbf{Grad} (Categorical): Whether the soybean variety graduated from the last round of yield test and proceeded to be commercialized. Takes on the value $-1$ if it is not part of a class, $0$ if it is part of a class but did not graduate, $1$ if it is part of a class and graduated.\\
+\end{enumerate}
+
+ Our response variable is \textbf{Bags Sold} (Float).\\
+
+\subsection*{Understanding the Data}
+\hfill \\
+
+From our own Excel analysis and the clarification provided by the organizers, we understood the following:
+\begin{enumerate}
+\item An experiment consists of multiple varieties tested over multiple locations. Each variety is tested over the same locations.
+\item If $Grad = 0$, then $BagsSold = 0$.
+\item For varieties which are not part of a class, $Class = -1$, $Grad = -1$ and $BagsSold = 0$.
+\item Varieties which are not part of a class do not appear in those with a class. However, families which are not part of a class may appear in those with a class.
+\item Every experiment has at least one benchmark.
+\item A variety which did not graduate could still be used as a benchmark.
+\item Some benchmarks do not have bags sold, probably because the benchmarks are from other seed companies and sales data is not available.
+
+
+
+\end{enumerate}
+
+\subsection*{Summary Statistics}
+\subsection*{Exploratory Data Visualization}
+\subsection*{Choice of Language and Possible Methodology}
+\hfill \\
+
+ 
+We will be conducting our analysis mainly in $R$, though we may use some other scripting languages, such as Python and Julia, to automate the I/O and data cleaning beforehand.\\
+\\
+Even though we are to predict the sales volume, we can still do classification beforehand to do a sanity check. This means that we will most likely be using SVMs for classification.
+
+
+
+\end{document}
+

@@ -1,4 +1,5 @@
 #install.packages("ggplot2")
+#install.packages("lattice")
 #install.packages("rtf")
 
 library(ggplot2)
@@ -7,7 +8,7 @@ library(rtf)
 
 data <- read.csv("../Student_Team_Competition_Syngenta_Data/EXPERIMENT DATA CSV (Cleaned).csv")
 str(data)
-Freq_vs_Yield = hist(data$RM, breaks=12, col="blue")
+hist(data$RM, breaks=12, col="blue")
 hist(data$YIELD, breaks=12, col="blue")
 hist(data$BAGSOLD, breaks=12, col="blue")
 
