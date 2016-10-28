@@ -11,7 +11,7 @@
 \usepackage[margin=1.0in]{geometry}
 
 \usepackage{svg}
-
+\usepackage{pdfpages}
 \usepackage{verbatimbox}
 \usepackage{xcolor}
 \usepackage{adjustbox}
@@ -118,15 +118,25 @@ From our own Excel analysis and the clarification provided by the organizers, we
 
 \newpage
 \subsection*{Data Visualization}
+\hfill \\
+
+All visualizations were done for experiments in 2009 only. We plotted $Yield$ against $RM$ and saw that there was a positive trend in the data.  From this scatter plot, we saw no observable difference between varieties that graduated and those that did not. We also plotted a histogram of $Yield$, and it appears that there are no outliers. From the boxplots, the yield for benchmarks and non-benchmarks are similar, and graduates have a lower yield than non-graduates. \\
+\begin{center}
+\includegraphics[height = 7cm, width = 12.5cm]{plot1.pdf}
+\end{center}
+\begin{center}
+\includegraphics[height = 7cm, width = 12cm]{boxplot.pdf}
+\end{center}
+
 \subsection*{Choice of Language and Possible Methodology}
 \hfill \\
 
- 
 We will be conducting our analysis mainly in $R$, though we may use some other scripting languages, such as Python and Julia, to automate the I/O and data cleaning beforehand.\\
 \\
-Even though we are to predict the sales volume, we can still do classification beforehand to do a sanity check. This means that we will most likely be using SVMs for classification.
+Even though we are to predict the sales volume, we can still do classification beforehand to do a sanity check. This means that we will most likely be using SVMs for classification, as they are a very robust classification methods.\\
+\\
+As for now, we are still unsure about what feature transformations or kernels we will be choosing for fitting the data to a linear model, but further investigations later on should give us a better understanding on this issue.
 
 
 
 \end{document}
-
