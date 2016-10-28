@@ -29,14 +29,14 @@
 \begin{document}
 \maketitle
 
-\underline{NOTE TO READER}: Our project topic is based on the INFORMS Competition. Much of the information was only just released by the organizers. As such, most of our time was spent on trying to understand the data. There are some parts of the data which we still do not understand, and we are waiting for the organizer's clarification. 
+\underline{NOTE}: Our project topic is based on the INFORMS competition. Much of the information was only just released by the organizers. Therefore, most of our time was spent on trying to understand the data. There are some parts of the data which we still do not understand, and we are waiting for the organizer's clarification. 
 
 \subsection*{Abstract}
 \hfill \\
 
-In order for a crop variety to become commercialised, it often has to undergo several rounds of strict testing and experimentation to ensure that it offers good yield. Throughout these multiple phases of testing, crop varieties are often benchmarked against their ``peers" and successfully commercialised varieties that came before by their yield. Every year, varieties that fail to make the cut are discontinued, while those that survive compete again in the next year with newly introduced varieties.\\
+In order for a crop variety to become commercialised, it often has to undergo several rounds of strict testing and experimentation to ensure that it offers good yield. Throughout these multiple phases of testing, crop varieties are often benchmarked against their ``peers" and successfully commercialised varieties that came before by their yield. Every year, varieties that fail to make the cut are discontinued, while those that survive compete again in the following year with newly introduced varieties.\\
 \\
- The primary goal of the INFORMS competition is that given past data, we should develop a prediction model that can be used to \underline{predict the volume of potential sales for each soybean variety in the class of 2014}, and based on those predictions, determine if we should commercialise them or not. This article reports our preliminary data analyses conducted, interpretation of results, and our future plan of attack. \\
+ The primary goal of the INFORMS competition is that given past data, we should develop a prediction model that can be used to predict the volume of potential sales for each soybean variety in the class of 2014, and based on those predictions, determine if we should commercialise them or not. This report describes our preliminary data analyses conducted, interpretation of results, and our future plan of attack. \\
 
 
 \subsection*{Motivation}
@@ -47,7 +47,7 @@ In order for a crop variety to become commercialised, it often has to undergo se
 \subsection*{Understanding the Variables}
 \hfill \\
 
- Before using any sophisticated procedures, we first performed exploratory data analysis to get acquainted with the dataset. Our data consists of 258253 observations and 11 predictors, and we provide a description of each predictor variable below.\\
+ Before using any sophisticated procedures, we first performed exploratory data analysis to get acquainted with the dataset. Our data consists of 11 predictors, and we provide a description of each predictor variable below.\\
 
 \begin{enumerate}
     \item \textbf{Year} (Integer): When the experiment was conducted.
@@ -60,29 +60,45 @@ In order for a crop variety to become commercialised, it often has to undergo se
     \item \textbf{REPNO} (Categorical): Replication number. A variety under a specific experiment and location is tested more than once.
     \item \textbf{Yield} (Float): This refers to the amount of grain per unit of land that a soybean variety produces. 
     \item \textbf{Class} (Integer): The batch the soybean variety belongs to. Takes on the value -1 if it is not part of a class.
-    \item \textbf{Grad} (Categorical): Whether the soybean variety graduated from the last round of yield test and proceeded to be commercialized. Takes on the value -1 if it is not part of a class, 0 if it is part of a class but did not graduate, 1 if it is part of a class and graduated.\\
+    \item \textbf{Grad} (Categorical): Whether the soybean variety graduated from the last round of yield test and proceeded to be commercialised. Takes on the value -1 if it is not part of a class, 0 if it is part of a class but did not graduate, 1 if it is part of a class and graduated.\\
 \end{enumerate}
 
- Our response variable is \textbf{Bags Sold} (Float). This is the number of bags of seed sold in the second year after commercialization. High relative sales volume in the second year of sales is associated with the superiority of a variety relative to other choices in the marketplace. Bags Sold takes on the value -1 if the variety is not part of a class.
+ Our response variable is \textbf{Bags Sold} (Float). This is the number of bags of seed sold in the second year after commercialisation. High relative sales volume in the second year of sales is associated with the superiority of a variety relative to other choices in the marketplace. Bags Sold takes on the value -1 if the variety is not part of a class. \\ 
 
 \subsection*{Panel Data}
 \hfill \\
+
 The type of data given to us is called panel data, which refers to multi-dimensional data involving multiple measurements over multiple time periods.\\
 \begin{enumerate}
 \item In an experiment, multiple varieties (the same varieties) are tested over multiple locations. Within
 each location, some varieties are benchmarks.
 \item Within the same experiment and location, the test for a variety is replicated. Replication is necessary
-because the yield can vary even within the same field, due to different soil conditions for instance.
+because the yield can vary even within the same field due to different soil conditions for instance.
 \item  One row of the data represents a particular replication of a specific experiment, location and variety.
-\item For each variety, the $Family$, $RM$, $Grad$ and $BagsSold$ is fixed. $Yield$ varies
+\item For each variety, the $Family$, $RM$, $Grad$ and $BagsSold$ are fixed. $Yield$ varies. \\
 \end{enumerate}
-
-
 
 \subsection*{Splitting the Data}
 \hfill \\
-Our data file of 258253 observations was split into a XXXX set and a prediction set (
 
+We split our dataset into a training set, test set and prediction set. The prediction set contains all the unlabelled observations from the Class of 2014.\\
+
+The training set and test are split using 5-fold cross validation for time series, based on the year of the experiments.  This is slightly different from the usual cross validation for non-time series data.\\
+
+\begin{center}
+\begin{tabular}{ |c| c |c| }
+\hline
+ Fold & Training Set & Test Set \\ [0.5ex] 
+ \hline\hline
+ Fold 1 & 2009 & 2010 \\ 
+ Fold 2 & 2009, 2010 & 2011 \\  
+ Fold 3 & 2009, 2010, 2011 & 2012  \\
+ Fold 4 & 2009, 2010, 2011, 2012 & 2013 \\
+ Fold 5 & 2009, 2010, 2011, 2012, 2013 & 2014 \\
+\hline
+\end{tabular} 
+\end{center}
+\vspace{5mm}
 
 \subsection*{Understanding the Data}
 \hfill \\
@@ -95,17 +111,13 @@ From our own Excel analysis and the clarification provided by the organizers, we
 \item If $Grad = 1$, $\iff$ $BagsSold > 0$. 
 \item For varieties which are not part of a class, $Class = -1$, $Grad = -1$ and $BagsSold = -1$.
 \item Using set intersection, we found out that the varieties do not overlap across the classes $Class = -1$, 2011, 2012, 2013, 2014.
+\item It is possible that some varieties belonging to a certain class skip some year(s) of testing.
 \item Benchmarks need not be part of a class, and benchmarks may or may not graduate.
 \item Some benchmarks do not have bags sold, probably because the benchmarks are from other seed companies and sales data is not available.
-
 \end{enumerate}
 
-\subsection*{Summary Statistics}
-\hfill\\
-Max number of replications:\\
-Number of locations per experiment:\\
-
-\subsection*{Exploratory Data Visualization}
+\newpage
+\subsection*{Data Visualization}
 \subsection*{Choice of Language and Possible Methodology}
 \hfill \\
 
