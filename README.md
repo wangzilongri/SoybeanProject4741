@@ -13,6 +13,6 @@ Data files are confidential so they will not be available in this repo (Sorry)
 Julia files for cleaning data available
 
 ### Update: 28th October 2016
-Midterm report is now available under Midterm_Report folder!
+Midterm report is now available under Midterm_Report folder! SoybeanProject4741/Midterm_Report/project_midterm_report.pdf
 
 R files used to generate pretty plots also available under David_Exp folder
