@@ -1,16 +1,25 @@
 #install.packages("mlr");
-library(mlr);
+#library(mlr);
+#library(mlbench);
+#library(e1071);
+#library(rpart);
+#require(foreign);
+#require(nnet);
+#require(ggplot2);
+#require(reshape2);
+
+library(rpart);
+library(adabag);
+this.dir <- dirname(parent.frame(2)$ofile)
+setwd(this.dir)
+
 
 training = read.table("../Split_Data/training[1].csv",sep=",",header=TRUE);
 testing = read.table("../Split_Data/test_2010.csv",sep=",",header=TRUE);
 
-train_sub = subset(training,select = -c(EXPERIMENT,LOCATION,YEAR,FAMILY,VARIETY,RM));
-test_sub = subset(testing, select = -c(EXPERIMENT,LOCATION,YEAR,FAMILY,VARIETY,RM));
+training$GRAD <- as.factor(training$GRAD);
+testing$GRAD <- as.factor(testing$GRAD);
 
-classif.task = makeClassifTask(id = "training[1]",data = train_sub, target = "GRAD");
-#classif.lrn = makeLearner("classif.randomForest", predict.type = "prob", fix.factors.prediction = TRUE);
-
-#mod = train(classif.lrn,classif.task);
-#getLearnerModel(mod);
-
-#newdata.predict = predict(mod, newdata=test_sub);
+training.adaboost <- boosting( GRAD ~.,data=training,boos=TRUE,mfinal=2);
+importanceplot(training.adaboost);
+save.image(file = "training_done.RData");
