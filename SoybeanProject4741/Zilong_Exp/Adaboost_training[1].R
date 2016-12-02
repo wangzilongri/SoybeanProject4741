@@ -20,9 +20,6 @@ setwd(this.dir)
 training_1 = read.table("../Split_Data2/training[1].csv",sep=",",header=TRUE);
 testing_1 = read.table("../Split_Data2/test_2010.csv",sep=",",header=TRUE);
 
-
-#Cut out YEAR, EXPERIMENT, LOCATION, VARIETY, FAMILY, RM, YIELD
-
 #Use 
 #X: CHECK, RM, YIELD, Family segments, CLASS_OF
 #y: GRAD as a factor
@@ -125,8 +122,6 @@ pred5 <- predict(test_adaboost5,newdata = testing5);
 confusion5 <- confusionMatrix(pred5$class,reference = testing5$GRAD);
 
 
-############### PRECISION AND RECALL ##############################################
-
 PRmat <- function(cmatrix,n){
   arr = array(cmatrix$table);
   precision0 = arr[1]/(arr[1]+arr[3]);
@@ -134,17 +129,56 @@ PRmat <- function(cmatrix,n){
   recall1 = arr[1]/(arr[1]+arr[2]);
   recall2 = arr[4]/(arr[3]+arr[4]); 
   
+  avgPrec = 0.5*(precision0 + precision1);
+  avgRec = 0.5*(recall1 + recall2);
+  IndividualFScore = 2/(1/avgPrec + 1/avgRec);
+  
   k=paste("for",toString(n));
   a=paste("precision0",toString(precision0));
   b=paste("precision1",toString(precision1));
   c=paste("recall1",toString(recall1));
   d=paste("recall2",toString(recall2));
+  e=paste("F1 Score",toString(IndividualFScore));
   
   print(k);
-  print(a);print(b);print(c);print(d);print("");
+  print(a);print(b);print(c);print(d);print(e);print("");
   
-  return( c(precision0,precision1,recall1,recall2) )
+  return( c(precision0,precision1,recall1,recall2,IndividualFScore) );
 }
+
+
+############### PRECISION AND RECALL TRAINING ##########################################
+# CHECK P,R, F for training set
+check1 = predict(test_adaboost1,newdata=training1);
+check2 = predict(test_adaboost2,newdata=training2);
+check3 = predict(test_adaboost3,newdata=training3);
+check4 = predict(test_adaboost4,newdata=training4);
+check5 = predict(test_adaboost5,newdata=training5);
+
+trainConf1 <- confusionMatrix(check1$class,reference = training1$GRAD);
+trainConf2 <- confusionMatrix(check2$class,reference = training2$GRAD);
+trainConf3 <- confusionMatrix(check3$class,reference = training3$GRAD);
+trainConf4 <- confusionMatrix(check4$class,reference = training4$GRAD);
+trainConf5 <- confusionMatrix(check5$class,reference = training5$GRAD);
+
+trainresults1 = PRmat(trainConf1,1);
+trainresults2 = PRmat(trainConf2,2);
+trainresults3 = PRmat(trainConf3,3);
+trainresults4 = PRmat(trainConf4,4);
+trainresults5 = PRmat(trainConf5,5);
+
+globalTrainPrecision = trainresults1[1]+trainresults1[2]+trainresults2[1]+trainresults2[2]+trainresults3[1]+trainresults3[2]+trainresults4[1]+trainresults4[2]+trainresults5[1]+trainresults5[2];
+globalTrainRecall = trainresults1[3]+trainresults1[4]+trainresults2[3]+trainresults2[4]+trainresults3[3]+trainresults3[4]+trainresults4[3]+trainresults4[4]+trainresults5[3]+trainresults5[4];
+
+avgGlobalTrainPrecision = globalTrainPrecision/10;
+avgGlobalTrainRecall = globalTrainRecall/10;
+trainGlobalF = 2/(1/avgGlobalTrainRecall+1/avgGlobalTrainPrecision);
+print(paste("Training Global F1 Score is",toString(trainGlobalF)));
+
+
+############### PRECISION AND RECALL TEST ##############################################
+
+
 
 arr1 = array(confusion1$table);
 arr2 = array(confusion2$table);
@@ -158,4 +192,42 @@ results3 = PRmat(confusion3,3);
 results4 = PRmat(confusion4,4);
 results5 = PRmat(confusion5,5);
 
+globalPrecision = results1[1]+results1[2]+results2[1]+results2[2]+results3[1]+results3[2]+results4[1]+results4[2]+results5[1]+results5[2];
+globalRecall = results1[3]+results1[4]+results2[3]+results2[4]+results3[3]+results3[4]+results4[3]+results4[4]+results5[3]+results5[4];
+
+avgPrecision = globalPrecision/10;
+avgRecall = globalRecall/10;
+
+globalF = 2/(1/avgPrecision+1/avgRecall);
+print(paste("Global F1 Score is",toString(globalF)));
+
+############## CHOOSE THE BEST ###########################################################
+
+modelchoices = array(c(test_adaboost1,test_adaboost2,test_adaboost3,test_adaboost4,test_adaboost5));
+resultsarr = array(c(results1,results2,results3,results4,results5));
+best = 1;
+maxF = resultsarr[5] 
+for (i in 2:5){
+  if (maxF<resultsarr[i*5]){
+    maxF = resultsarr[i*5];
+    best = i;
+  }
+  else{
+    ;
+  }
+}
+print(paste("Best model is",toString(best)));
+bestmodel = modelchoices[best];
+############## OBTAIN THE PREDICTION SET ###############################################
+
+predictionData = read.table("../Split_Data2/prediction_set.csv",sep=",",header=TRUE);
+predictionBackup = predictionData;
+predictionData <- subset( predictionData,select=c("YEAR","CHECK","RM", "YIELD","FAM_SEGMENT1","FAM_SEGMENT2","FAM_SEGMENT3","FAM_SEGMENT4","FAM_SEGMENT5","CLASS_OF", "GRAD" ) );
+
+predictionData$GRAD <- factor(predictionData$GRAD); 
+
+predPRED <- predict(bestmodel,newdata = predictionData);
+
+new <- cbind(predictionBackup,predPRED);
+write.csv(new, file = "adaboost.csv");
 
