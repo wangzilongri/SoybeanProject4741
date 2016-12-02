@@ -4,6 +4,7 @@ library(rpart)
 library(caret)
 library(kernlab)
 library(clue)
+library(pca)
 
 require(foreign)
 require(nnet)
@@ -47,10 +48,6 @@ train5$GRAD <- as.factor(train5$GRAD)
 
 
 # test sets # 
-
-
-#myvars <- myvars[1:length(myvars)-1]
-#myvars
 
 test1 <-read.csv("../Split_Data2/test_2010.csv")
 test1 <- test1[myvars]
@@ -106,7 +103,7 @@ barplot(table5, main="Grad vs Class",
         legend = rownames(table5), beside=TRUE)
 table5
 #############
-
+# Testing error
 nb_model <- naiveBayes(train1$GRAD~., data = train1)
 pred <- predict(nb_model, test1[,1:length(myvars)-1])
 test1 <-read.csv("../Split_Data2/test_2010.csv")
@@ -282,7 +279,7 @@ test5$CHECK <- as.numeric(test5$CHECK)
 #test5$CLASS_OF <- as.factor(test5$CLASS_OF)
 
 
-# training and testing error#
+# training and testing error for 2 clusters#
 
 cluster1 <- kmeans(train1[,1:dim(train1)[2]-1], 2, nstart = 20)
 pred <-cluster1$cluster
@@ -340,8 +337,99 @@ tabletest3
 tabletest4
 tabletest5
 
+# training and testing error for 3 clusters#
+
+setwd("C:/Users/User/Dropbox/SoybeanProject4741/Clara_Exp")
+myvars <- c("CHECK", "RM", "YIELD", "CLASS_ABSENT", "FAM_SEGMENT1", "FAM_SEGMENT2", "FAM_SEGMENT3", "FAM_SEGMENT4", "FAM_SEGMENT5", "GRAD")
 
 
+train1 <- read.csv("../Split_Data2/training[1].csv")
+train1 <- train1[myvars]
+train1$GRAD <- as.factor(train1$GRAD)
+train1$CHECK <- as.numeric(train1$CHECK) # change to 1 and 0
+#train1$CLASS_OF <- as.factor(train1$CLASS_OF)
+
+train2 <- read.csv("../Split_Data2/training[2].csv")
+train2 <- train2[myvars]
+train2$GRAD <- as.factor(train2$GRAD)
+train2$CHECK <- as.numeric(train2$CHECK)
+#train2$CLASS_OF <- as.factor(train2$CLASS_OF)
+
+train3 <- read.csv("../Split_Data2/training[3].csv")
+train3 <- train3[myvars]
+train3$GRAD <- as.factor(train3$GRAD)
+train3$CHECK <- as.numeric(train3$CHECK)
+#train3$CLASS_OF <- as.factor(train3$CLASS_OF)
+
+train4 <- read.csv("../Split_Data2/training[4].csv")
+train4 <- train4[myvars]
+train4$GRAD <- as.factor(train4$GRAD)
+train4$CHECK <- as.numeric(train4$CHECK)
+#train4$CLASS_OF <- as.factor(train4$CLASS_OF)
+
+train5 <- read.csv("../Split_Data2/training[5].csv")
+train5 <- train5[myvars]
+train5$GRAD <- as.factor(train5$GRAD)
+train5$CHECK <- as.numeric(train5$CHECK)
+#train5$CLASS_OF <- as.factor(train5$CLASS_OF)
+
+
+
+cluster1 <- kmeans(train1[,1:dim(train1)[2]-1], 3, nstart = 20)
+pred <-cluster1$cluster
+tabletrain1 <-table(cl_predict(cluster1, train1[1:length(myvars)-1]), train1$GRAD)
+tabletest1 <-table(cl_predict(cluster1, test1[1:length(myvars)-1]), test1$GRAD)
+train1 <- read.csv("../Split_Data2/training[1].csv")
+new <- cbind (train1, pred)
+write.csv(new, file = "kmeanstrain1_3clusters.csv")
+
+
+cluster2 <- kmeans(train2[,1:dim(train2)[2]-1], 3, nstart = 20)
+pred <-cluster2$cluster
+tabletrain2 <-table(cl_predict(cluster2, train2[1:length(myvars)-1]), train2$GRAD)
+tabletest2 <-table(cl_predict(cluster2, test2[1:length(myvars)-1]), test2$GRAD)
+train2 <- read.csv("../Split_Data2/training[2].csv")
+new <- cbind (train2, pred)
+write.csv(new, file = "kmeanstrain2_3clusters.csv")
+
+
+cluster3 <- kmeans(train3[,1:dim(train3)[2]-1], 3, nstart = 20)
+pred <-cluster3$cluster
+tabletrain3 <-table(cl_predict(cluster3, train3[1:length(myvars)-1]), train3$GRAD)
+tabletest3 <-table(cl_predict(cluster3, test3[1:length(myvars)-1]), test3$GRAD)
+train3 <- read.csv("../Split_Data2/training[3].csv")
+new <- cbind (train3, pred)
+write.csv(new, file = "kmeanstrain3_3clusters.csv")
+
+
+cluster4 <- kmeans(train4[,1:dim(train4)[2]-1], 3, nstart = 20)
+pred <-cluster4$cluster
+tabletrain4 <-table(cl_predict(cluster4, train4[1:length(myvars)-1]), train4$GRAD)
+tabletest4 <-table(cl_predict(cluster4, test4[1:length(myvars)-1]), test4$GRAD)
+train4 <- read.csv("../Split_Data2/training[4].csv")
+new <- cbind (train4, pred)
+write.csv(new, file = "kmeanstrain4_3clusters.csv")
+
+
+cluster5 <- kmeans(train5[,1:dim(train5)[2]-1], 3, nstart = 20)
+pred <-cluster5$cluster
+tabletrain5 <-table(cl_predict(cluster5, train5[1:length(myvars)-1]), train5$GRAD)
+tabletest5 <-table(cl_predict(cluster5, test5[1:length(myvars)-1]), test5$GRAD)
+train5 <- read.csv("../Split_Data2/training[5].csv")
+new <- cbind (train5, pred)
+write.csv(new, file = "kmeanstrain5_3clusters.csv")
+
+tabletrain1
+tabletrain2
+tabletrain3
+tabletrain4
+tabletrain5
+
+tabletest1
+tabletest2
+tabletest3
+tabletest4
+tabletest5
 
 
 ##SPECTRAL##
@@ -349,68 +437,44 @@ tabletest5
 library(kernlab)
 setwd("C:/Users/User/Dropbox/SoybeanProject4741/Clara_Exp")
 
-train1 <- read.csv("../Split_Data2/training[1].csv")
 
+
+train2 <- read.csv("../Temp_Data/training[2].csv")
+myvars <- c("CHECK", "RM", "YIELD", "CLASS_ABSENT", "FAM_SEGMENT1", "FAM_SEGMENT2", "FAM_SEGMENT3", "FAM_SEGMENT4", "FAM_SEGMENT5", "GRAD")
 myvars <- c("RM", "YIELD", "CLASS_ABSENT", "GRAD")
 
-train1<-train1[myvars]
-train1$CHECK <- as.numeric(train1$CHECK)
 
-str(train1)
-dim(train1)
-
-train5 <- read.csv("../Temp_Data/training[5].csv")
-train5 <- read.csv("../Temp_Data/training[5].csv")
-
-train5<-train5[myvars]
-
-nrow(train5)
-str(train5)
-train5$CLASS_ABSENT<-as.numeric(train5$CLASS_ABSENT)
-train5$GRAD<-as.numeric(train5$GRAD)
+train2<-train2[myvars]
 
 
-train5<- data.matrix(train5)
-for (i in 1:nrow(train5)){
-  for (j in 1:ncol(train5))
-  df[i,j] = train5[i,j]
+train2$CLASS_ABSENT<-as.numeric(train2$CLASS_ABSENT)
+train2$GRAD<-as.numeric(train2$GRAD)
+train2$CHECK <- as.numeric(train2$CHECK)
+
+str(train2)
+
+df <- matrix(nrow=698,ncol=4)
+df
+
+
+for (i in 1:nrow(train2)){
+  for (j in 1:ncol(train2)){
+    df[i,j] = train2[i,j]
+  }
 }
-ncol(train5)
-str(train5)
-train5<-train5[2:nrow(train5),]
-str(train5)
-train5<-as.matrix(train5[,1:2])
-str(train5)
+
+train2<-df
+str(train2)
+
+
 library(kernlab)
-sc <- specc(train5, centers=2)
+sc <- specc(train2[,1:3], centers=2)
 sc
 centers(sc)
 size(sc)
 withinss(sc)
 plot(train1, col=sc)
+###PCA####
 
-
-library(pvclust)
-fit <- pvclust(train5, method.hclust="ward", method.dist="euclidean")
-pvrect(fit, alpha=.95)
-plot(fit) # dendogram with p values
-fit
-
-library(mclust)
-fit <- Mclust(train5)
-plot(fit) # plot results 
-summary(fit) # display the best model
-
-##############################################
-
-
-
-
-precision <- confusion1$byClass['Pos Pred Value']    
-recall <- confusion1$byClass['Sensitivity']
-f_measure1 <- 2 * ((precision * recall) / (precision + recall))
-
-f_measure1
-
-
+library(pca)
 
