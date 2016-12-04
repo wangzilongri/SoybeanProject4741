@@ -228,6 +228,10 @@ predictionData$GRAD <- factor(predictionData$GRAD);
 
 predPRED <- predict(bestmodel,newdata = predictionData);
 
-new <- cbind(predictionBackup,predPRED);
-write.csv(new, file = "adaboost.csv");
+predArr <- array(predPRED);
+
+
+
+#new <- cbind(predictionBackup,predPRED);
+#write.csv(new, file = "adaboost.csv");
 
